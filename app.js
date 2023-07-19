@@ -44,40 +44,29 @@ const apiSchema = new mongoose.Schema({
 const Api = mongoose.model('Api', apiSchema);
 
 app.post('/api', async (req, res) => {
-    const { name, endpoint } = req.body;
+    const { name, endpoint, latency, statusCode } = req.body;
+    console.log(name, endpoint, latency, statusCode);
 
-    // Capture start time
-    const startTime = new Date();
-
+    const endpointWithoutQueryParams = endpoint.split('?')[0]; 
+    console.log(endpointWithoutQueryParams);
     try {
-        // Make request to the user's API endpoint
-        const response = await fetch(endpoint);
-
-        // Capture end time and calculate latency
-        const endTime = new Date();
-        const latency = endTime - startTime;
-
-        // Find existing API data with the same endpoint
-        const existingApi = await Api.findOne({ endpoint });
+        const existingApi = await Api.findOne({ endpoint: endpointWithoutQueryParams });
 
         if (existingApi) {
-            // If an existing API entry is found, increment the totalRequests count
             existingApi.totalRequests += 1;
             await existingApi.save();
         } else {
-            // Save the API data to the database
             const api = new Api({
                 name: name,
                 endpoint: endpoint,
                 latency: latency,
-                statusCode: response.status,
+                statusCode: statusCode,
                 totalRequests: 1
             });
             await api.save();
         }
 
-        // Send the response to the user's API
-        res.json({ message: 'API data saved and response sent successfully' });
+        res.json({ message: 'Done' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
