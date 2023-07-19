@@ -22,18 +22,34 @@ const apiSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    endpoint: {
+    rootUrl: {
         type: String,
         required: true
     },
-    latency: {
-        type: Number,
-        required: true
-    },
-    statusCode: {
-        type: Number,
-        required: true
-    },
+    data: [
+        {
+            user: {
+                type: String,
+                required: true
+            },
+            endpoint: {
+                type: String,
+                required: true
+            },
+            latency: {
+                type: Number,
+                required: true
+            },
+            statusCode: {
+                type: Number,
+                required: true
+            },
+            receivedAt: {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ],
     totalRequests: {
         type: Number,
         default: 0
@@ -44,24 +60,37 @@ const apiSchema = new mongoose.Schema({
 const Api = mongoose.model('Api', apiSchema);
 
 app.post('/api', async (req, res) => {
-    const { name, endpoint, latency, statusCode } = req.body;
-    console.log(name, endpoint, latency, statusCode);
+    const { name, user, endpoint, latency, statusCode } = req.body;
+    console.log(name, user, endpoint, latency, statusCode);
 
-    const endpointWithoutQueryParams = endpoint.split('?')[0]; 
+    const endpointWithoutQueryParams = endpoint.split('?')[0];
     console.log(endpointWithoutQueryParams);
-    try {
-        const existingApi = await Api.findOne({ endpoint: endpointWithoutQueryParams });
 
+    try {
+        
+        const existingApi = await Api.findOne({ rootUrl: endpointWithoutQueryParams });
         if (existingApi) {
             existingApi.totalRequests += 1;
+            existingApi.data.push({
+                user: user,
+                endpoint: endpoint,
+                latency: latency,
+                statusCode: statusCode,
+                receivedAt: new Date()
+            });
             await existingApi.save();
         } else {
             const api = new Api({
                 name: name,
-                endpoint: endpoint,
-                latency: latency,
-                statusCode: statusCode,
-                totalRequests: 1
+                rootUrl: endpointWithoutQueryParams,
+                totalRequests: 1,
+                data: [{
+                    user: user,
+                    endpoint: endpoint,
+                    latency: latency,
+                    statusCode: statusCode,
+                    receivedAt: new Date()
+                }]
             });
             await api.save();
         }
