@@ -28,6 +28,11 @@ const apiSchema = new mongoose.Schema({
     },
     data: [
         {
+            _id: false,
+            id: {
+                type: Number,
+                required: true
+            },
             user: {
                 type: String,
                 required: true
@@ -72,6 +77,7 @@ app.post('/api', async (req, res) => {
         if (existingApi) {
             existingApi.totalRequests += 1;
             existingApi.data.push({
+                id: existingApi.totalRequests,
                 user: user,
                 endpoint: endpoint,
                 latency: latency,
@@ -85,6 +91,7 @@ app.post('/api', async (req, res) => {
                 rootUrl: endpointWithoutQueryParams,
                 totalRequests: 1,
                 data: [{
+                    id: 1,
                     user: user,
                     endpoint: endpoint,
                     latency: latency,
