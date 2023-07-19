@@ -104,6 +104,35 @@ app.post('/api', async (req, res) => {
     }
 });
 
+app.get('/apis', async (req, res) => {
+    try {
+        // only send name and rootUrl
+        const apis = await Api.find({}, { name: 1, rootUrl: 1 });
+        res.json(apis);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/:id', async (req, res) => {
+    try {
+        const api = await Api.findById(req.params.id);
+        res.json(api);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/:id/data', async (req, res) => {
+    try {
+        const api = await Api.findById(req.params.id);
+        res.json(api);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+        
+
 // Start the server
 app.listen(3000, () => {
     console.log('Server started on port 3000');
