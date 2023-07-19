@@ -66,10 +66,7 @@ const Api = mongoose.model('Api', apiSchema);
 
 app.post('/api', async (req, res) => {
     const { name, user, endpoint, latency, statusCode } = req.body;
-    console.log(name, user, endpoint, latency, statusCode);
-
     const endpointWithoutQueryParams = endpoint.split('?')[0];
-    console.log(endpointWithoutQueryParams);
 
     try {
         
