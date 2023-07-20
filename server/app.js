@@ -2,10 +2,14 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import cors from 'cors';
 dotenv.config();
 
 // Create Express app
 const app = express();
+
+// Enable CORS
+app.use(cors());
 
 // Body-parser middleware
 app.use(bodyParser.json());
@@ -121,17 +125,7 @@ app.get('/api/:id', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-});
-
-app.get('/api/:id/data', async (req, res) => {
-    try {
-        const api = await Api.findById(req.params.id);
-        res.json(api);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-        
+});    
 
 // Start the server
 app.listen(3000, () => {
