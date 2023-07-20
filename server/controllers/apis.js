@@ -1,6 +1,8 @@
 import Api from "../models/Apis.js";
 import User from "../models/User.js";
 
+import { ObjectId } from "mongoose";
+
 export const addApi = async (req, res) => {
     const { host_id, user, endpoint, latency, statusCode } = req.body;
     const endpointWithoutQueryParams = endpoint.split('?')[0];
@@ -74,3 +76,46 @@ export const getApi = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+export const approveApi = async (req, res) => {
+    try {
+        const api = await Api.findById(req.params.id);
+        const host = await User.findById({ _id: req.params.userId });
+
+        host.apis.push({
+            id: api._id,
+            name: api.name,
+            rootUrl: api.rootUrl,
+            totalRequests: api.totalRequests
+        });
+
+        // Convert req.params.id to ObjectId before filtering
+        const apiId = new ObjectId(req.params.id);
+
+        // Filter out the approved API from pendingApis
+        host.pendingApis = host.pendingApis.filter(apiItem => apiItem.id.equals(apiId));
+
+        await host.save();
+
+        res.status(200).json({ message: 'Done' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+
+export const rejectApi = async (req, res) => {
+    try {
+        const host = await User.findById({ _id: req.params.userId });
+
+        const apiId = new ObjectId(req.params.id);
+
+        host.pendingApis = host.pendingApis.filter(apiItem => apiItem.id.equals(apiId));
+
+        await host.save();
+
+        res.status(200).json({ message: 'Done' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
