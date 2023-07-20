@@ -26,14 +26,12 @@ export const getAllUsers = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, occupation, location, website, twitter, discord, github, linkedin, youtube } =
+    const { firstName, lastName } =
       req.body;
     const user = await User.findById(id);
 
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
-    if (occupation) user.occupation = occupation;
-    if (location) user.location = location;
 
     await user.save();
     res.status(200).json(user);

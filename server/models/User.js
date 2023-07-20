@@ -29,8 +29,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "https://cdn.discordapp.com/attachments/1055907531622465648/1056987909359685692/default_pfp.png",
     },
-    location: String,
-    occupation: String,
+    pendingApis: {
+      type: Array,
+      default: [],
+    },
+    apis: {
+      type: Array,
+      default: [],
+    },
   },
   { timestamps: true }
 );

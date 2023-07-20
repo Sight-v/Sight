@@ -1,11 +1,14 @@
 import Api from "../models/Apis.js";
+import User from "../models/User.js";
 
 export const addApi = async (req, res) => {
-    const { name, user, endpoint, latency, statusCode } = req.body;
+    const { host_id, user, endpoint, latency, statusCode } = req.body;
     const endpointWithoutQueryParams = endpoint.split('?')[0];
+    const name = endpoint.split('/')[0];
+
+    console.log('host_id', host_id);
 
     try {
-
         const existingApi = await Api.findOne({ rootUrl: endpointWithoutQueryParams });
         if (existingApi) {
             existingApi.totalRequests += 1;
@@ -33,6 +36,10 @@ export const addApi = async (req, res) => {
                 }]
             });
             await api.save();
+
+            const host = await User.findById({ _id: host_id });
+            host.pendingApis.push(api._id);
+            await host.save();
         }
 
         res.status(200).json({ message: 'Done' });

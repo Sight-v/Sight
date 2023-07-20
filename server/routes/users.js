@@ -55,8 +55,8 @@ router.post("/send/:path", (req, res) => {
               error: err
           });
       } else {
-          if (fs.existsSync(path.join(__dirname, `../../up-server/public/assets/${req.params.path}`))) {
-              const file = path.join(__dirname, `../../up-server/public/assets/${req.params.path}`);
+          if (fs.existsSync(path.join(__dirname, `../../server/public/assets/${req.params.path}`))) {
+              const file = path.join(__dirname, `../../server/public/assets/${req.params.path}`);
               const fileName = req.params.path.split(".")[0];
               image2url.upload(`${file}`, `${fileName}`).then(url => {
                   res.json({

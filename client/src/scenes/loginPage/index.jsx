@@ -13,9 +13,9 @@ const LoginPage = () => {
         textAlign="center"
       >
         {/* <Typography fontWeight="bold" fontSize="32px" color="primary">
-          Quake
+          Trapi
         </Typography> */}
-        <img src="https://cdn.discordapp.com/attachments/1096673366485782588/1117772388327768134/quakelogo.png" alt="Quake Logo" width="120vw" height="auto" />
+        <img src="https://cdn.discordapp.com/attachments/1096673366485782588/1117772388327768134/Trapilogo.png" alt="Quake Logo" width="120vw" height="auto" />
         {/* since this doesnt load the image we will */}
       </Box>
 
@@ -27,7 +27,7 @@ const LoginPage = () => {
         backgroundColor={theme.palette.background.alt}
       >
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-          Welcome to Quake ! Hope you enjoy your stay.
+          Welcome to Trapi ! Hope you enjoy your stay.
         </Typography>
         <Form />
       </Box>
