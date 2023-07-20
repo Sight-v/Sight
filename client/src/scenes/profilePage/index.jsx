@@ -2,8 +2,11 @@ import { Box, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+
 import Navbar from "../../scenes/navbar";
 import UserWidget from "../../scenes/widgets/UserWidget";
+import PendingWidget from "../../scenes/widgets/PendingWidget";
+
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const { userId } = useParams();
@@ -48,6 +51,7 @@ const ProfilePage = () => {
         >
           <UserWidget userId={userId} pictureUrl={user.pictureUrl} />
           <Box m="2rem 0" />  
+          <PendingWidget userId={userId} />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "50%" : undefined}

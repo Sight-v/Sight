@@ -38,7 +38,14 @@ export const addApi = async (req, res) => {
             await api.save();
 
             const host = await User.findById({ _id: host_id });
-            host.pendingApis.push(api._id);
+
+            host.pendingApis.push({
+                id: api._id,
+                name: api.name,
+                rootUrl: api.rootUrl,
+                totalRequests: api.totalRequests
+            });
+
             await host.save();
         }
 
