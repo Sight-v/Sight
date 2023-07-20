@@ -1,133 +1,64 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import cors from 'cors';
+import express from "express";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import multer from "multer";
+import helmet from "helmet";
+import morgan from "morgan";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import apiRoutes from "./routes/apis.js";
+import { register } from "./controllers/auth.js";
+import { verifyToken } from "./middleware/auth.js";
+import http from "http";
+
+/* CONFIGURATIONS */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 dotenv.config();
-
-// Create Express app
 const app = express();
-
-// Enable CORS
+app.use(express.json());
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(morgan("common"));
+app.use(bodyParser.json({ limit: "30mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
+app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
-// Body-parser middleware
-app.use(bodyParser.json());
-
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log(err));
-
-// Define API schema
-const apiSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
+/* FILE STORAGE */
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "public/assets");
     },
-    rootUrl: {
-        type: String,
-        required: true
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
     },
-    data: [
-        {
-            _id: false,
-            id: {
-                type: Number,
-                required: true
-            },
-            user: {
-                type: String,
-                required: true
-            },
-            endpoint: {
-                type: String,
-                required: true
-            },
-            latency: {
-                type: Number,
-                required: true
-            },
-            statusCode: {
-                type: Number,
-                required: true
-            },
-            receivedAt: {
-                type: Date,
-                default: Date.now
-            }
-        }
-    ],
-    totalRequests: {
-        type: Number,
-        default: 0
-    }
 });
+const upload = multer({ storage });
 
-// Create API model
-const Api = mongoose.model('Api', apiSchema);
+/* ROUTES WITH FILES */
+app.post("/auth/register", upload.single("picture"), register);
 
-app.post('/api', async (req, res) => {
-    const { name, user, endpoint, latency, statusCode } = req.body;
-    const endpointWithoutQueryParams = endpoint.split('?')[0];
+/* ROUTES */
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/apis", apiRoutes);
 
-    try {
-        
-        const existingApi = await Api.findOne({ rootUrl: endpointWithoutQueryParams });
-        if (existingApi) {
-            existingApi.totalRequests += 1;
-            existingApi.data.push({
-                id: existingApi.totalRequests,
-                user: user,
-                endpoint: endpoint,
-                latency: latency,
-                statusCode: statusCode,
-                receivedAt: new Date()
-            });
-            await existingApi.save();
-        } else {
-            const api = new Api({
-                name: name,
-                rootUrl: endpointWithoutQueryParams,
-                totalRequests: 1,
-                data: [{
-                    id: 1,
-                    user: user,
-                    endpoint: endpoint,
-                    latency: latency,
-                    statusCode: statusCode,
-                    receivedAt: new Date()
-                }]
-            });
-            await api.save();
-        }
-
-        res.json({ message: 'Done' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.get('/apis', async (req, res) => {
-    try {
-        // only send name and rootUrl
-        const apis = await Api.find({}, { name: 1, rootUrl: 1 });
-        res.json(apis);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.get('/api/:id', async (req, res) => {
-    try {
-        const api = await Api.findById(req.params.id);
-        res.json(api);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});    
-
-// Start the server
-app.listen(3000, () => {
-    console.log('Server started on port 3000');
-});
+/* MONGOOSE SETUP */
+const PORT = process.env.PORT || 3001;
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port: ${PORT}`);
+    });
+  })
+  .catch((error) => console.log(`${error} did not connect`));
