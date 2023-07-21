@@ -15,8 +15,8 @@ dotenv.config();
 const router = express.Router();
 
 /* READ */
-router.get("/all", verifyToken, getApis);
 router.get("/:id", verifyToken, getApi);
+router.get("/all", verifyToken, getApis);
 
 /* UPDATE */
 router.post("/add", addApi);
