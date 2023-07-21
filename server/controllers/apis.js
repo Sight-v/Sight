@@ -11,31 +11,51 @@ export const addApi = async (req, res) => {
     console.log('host_id', host_id);
 
     try {
-        const existingApi = await Api.findOne({ rootUrl: endpointWithoutQueryParams });
-        if (existingApi) {
-            existingApi.totalRequests += 1;
-            existingApi.data.push({
-                id: existingApi.totalRequests,
-                user: user,
-                endpoint: endpoint,
-                latency: latency,
-                statusCode: statusCode,
-                receivedAt: new Date()
-            });
-            await existingApi.save();
-        } else {
-            const api = new Api({
-                name: name,
-                rootUrl: endpointWithoutQueryParams,
-                totalRequests: 1,
-                data: [{
-                    id: 1,
+        const existingApiByName = await Api.findOne({ name: name });
+
+        if (existingApiByName) {
+            const matchedEndpoint = existingApiByName.endpoints.find(endpointObj => endpointObj.endpoint === endpointWithoutQueryParams);
+            if (matchedEndpoint) {
+                matchedEndpoint.totalRequests += 1;
+                matchedEndpoint.data.push({
+                    id: matchedEndpoint.totalRequests,
                     user: user,
-                    endpoint: endpoint,
                     latency: latency,
                     statusCode: statusCode,
                     receivedAt: new Date()
-                }]
+                });
+            } else {
+                existingApiByName.endpoints.push({
+                    id: existingApiByName.endpoints.length + 1,
+                    endpoint: endpointWithoutQueryParams,
+                    data: [{
+                        id: 1,
+                        user: user,
+                        latency: latency,
+                        statusCode: statusCode,
+                        receivedAt: new Date()
+                    }],
+                    totalRequests: 1
+                });
+            }
+            existingApiByName.totalRequests = existingApiByName.endpoints.reduce((total, endpoint) => total + endpoint.totalRequests, 0);
+            await existingApiByName.save();
+        } else {
+            const api = new Api({
+                name: name,
+                endpoints: [{
+                    id: 1,
+                    endpoint: endpointWithoutQueryParams,
+                    data: [{
+                        id: 1,
+                        user: user,
+                        latency: latency,
+                        statusCode: statusCode,
+                        receivedAt: new Date()
+                    }],
+                    totalRequests: 1
+                }],
+                totalRequests: 1
             });
             await api.save();
 
@@ -44,7 +64,6 @@ export const addApi = async (req, res) => {
             host.pendingApis.push({
                 id: api._id,
                 name: api.name,
-                rootUrl: api.rootUrl,
                 totalRequests: api.totalRequests
             });
 
@@ -85,7 +104,6 @@ export const approveApi = async (req, res) => {
         host.apis.push({
             id: api._id,
             name: api.name,
-            rootUrl: api.rootUrl,
             totalRequests: api.totalRequests
         });
 

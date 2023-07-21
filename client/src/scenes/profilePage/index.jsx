@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import Navbar from "../../scenes/navbar";
 import UserWidget from "../../scenes/widgets/UserWidget";
 import PendingWidget from "../../scenes/widgets/PendingWidget";
+import UserApiWidget from "../widgets/UserApiWidget";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -28,6 +29,10 @@ const ProfilePage = () => {
 
   if (!user) return null;
 
+  function update() {
+    getUser();
+  }
+
   return (
     <Box>
       <Navbar />
@@ -49,17 +54,15 @@ const ProfilePage = () => {
                 height: "calc(90vh - 6rem)",
               }}
         >
-          <UserWidget userId={userId} pictureUrl={user.pictureUrl} />
+          <UserWidget user={user} />
           <Box m="2rem 0" />  
-          <PendingWidget userId={userId} />
+          <PendingWidget user={user} userId={userId} update={update} />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "50%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
-          {/* <MyPostWidget pictureUrl={user.pictureUrl} />
-          <Box m="2rem 0" />
-          <PostsWidget userId={userId} isProfile /> */}
+          <UserApiWidget user={user} />
         </Box>
       </Box>
     </Box>

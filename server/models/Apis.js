@@ -5,36 +5,45 @@ const ApiSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    rootUrl: {
-        type: String,
-        required: true
-    },
-    data: [
+    endpoints: [
         {
             _id: false,
             id: {
                 type: Number,
                 required: true
             },
-            user: {
-                type: String,
-                required: true
-            },
             endpoint: {
                 type: String,
                 required: true
             },
-            latency: {
+            data: [
+                {
+                    _id: false,
+                    id: {
+                        type: Number,
+                        required: true
+                    },
+                    user: {
+                        type: String,
+                        required: true
+                    },
+                    latency: {
+                        type: Number,
+                        required: true
+                    },
+                    statusCode: {
+                        type: Number,
+                        required: true
+                    },
+                    receivedAt: {
+                        type: Date,
+                        default: Date.now
+                    }
+                }
+            ],
+            totalRequests: {
                 type: Number,
-                required: true
-            },
-            statusCode: {
-                type: Number,
-                required: true
-            },
-            receivedAt: {
-                type: Date,
-                default: Date.now
+                default: 0
             }
         }
     ],
