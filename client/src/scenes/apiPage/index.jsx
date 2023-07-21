@@ -27,7 +27,6 @@ const ApiPage = () => {
     console.log(data);
   };
 
-
   useEffect(() => {
     getApi();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -41,20 +40,23 @@ const ApiPage = () => {
         display={isNonMobileScreens ? "flex" : "block"}
         gap="2rem"
         justifyContent="center"
-
         sx={{
           overflowY: "scroll",
           height: "calc(100vh - 6rem)",
         }}
       >
         <Box flexBasis={isNonMobileScreens ? "20%" : undefined}>
-            <ApiSidebar />
+          <ApiSidebar />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "70%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
+          {api !== null ? (
             <TrafficAnalyticsWidget api={api} />
+          ) : (
+            <p>Loading...</p>
+          )}
         </Box>
       </Box>
     </Box>
