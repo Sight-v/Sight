@@ -5,6 +5,7 @@ import WidgetWrapper from "../../components/WidgetWrapper";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import ApiListWidget from "./apiListWidget";
 import { Line } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -73,6 +74,7 @@ const TrafficAnalyticsWidget = ({ api }) => {
   }
 
   let totalApiCalls = 0;
+  let completeData = []
   api.endpoints.forEach((endpoint) => {
     endpoint.data.forEach((entry) => {
 
@@ -85,7 +87,6 @@ const TrafficAnalyticsWidget = ({ api }) => {
             chartData[dayIndex].totalApiCalls++;
             chartData[dayIndex].totalLatency += entry.latency;
           }
-          console.log(chartData);
         }
       } else {
         let time = new Date(entry.receivedAt).getTime();
@@ -98,9 +99,16 @@ const TrafficAnalyticsWidget = ({ api }) => {
 
           totalApiCalls = 0;
           timeChartData.forEach((item) => {
-            totalApiCalls += item.totalApiCalls;
+            totalApiCalls += item.totalApiCalls;       
           });
 
+          let data = {
+            user: entry.user,
+            endpoint: endpoint.endpoint,
+            status: entry.statusCode,
+            latency: entry.latency,
+          }
+          completeData.push(data);
         }
       }
     });
@@ -278,7 +286,9 @@ const TrafficAnalyticsWidget = ({ api }) => {
               <Button
                 key={range}
                 variant={selectedTimeRange === parseInt(range) ? "contained" : "outlined"}
-                onClick={() => handleTimeRangeFilter(parseInt(range))}
+                onClick={() => {
+                  handleTimeRangeFilter(parseInt(range))
+                }}
                 sx={{
                   height: "3rem",
                   width: "2rem",
@@ -310,6 +320,11 @@ const TrafficAnalyticsWidget = ({ api }) => {
           </React.Fragment>
         )}
       </Box>
+
+      <Divider sx={{ my: "1.5rem" }} />
+
+      <ApiListWidget listData={completeData} />
+
     </WidgetWrapper>
   );
 };

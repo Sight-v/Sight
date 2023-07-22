@@ -6,13 +6,14 @@ import Navbar from "../../scenes/navbar";
 
 import ApiSidebar from "../widgets/apiSidebarWidget";
 import TrafficAnalyticsWidget from "../widgets/trafficAnalyticsWidget";
+
 const ApiPage = () => {
   const { apiId } = useParams();
   const [api, setApi] = useState(null);
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-  
+
   const { _id } = useSelector((state) => state.user);
 
   const getApi = async () => {
