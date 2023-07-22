@@ -8,7 +8,6 @@ import ApiSidebar from "../widgets/apiSidebarWidget";
 import TrafficAnalyticsWidget from "../widgets/trafficAnalyticsWidget";
 const ApiPage = () => {
   const { apiId } = useParams();
-  console.log(apiId);
   const [api, setApi] = useState(null);
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
@@ -21,10 +20,8 @@ const ApiPage = () => {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log(response);
     const data = await response.json();
     setApi(data);
-    console.log(data);
   };
 
   useEffect(() => {

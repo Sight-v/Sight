@@ -54,9 +54,11 @@ const TrafficAnalyticsWidget = ({ api }) => {
 
   const generateMinuteLabels = (startTime, endTime) => {
     const labels = [];
-    for (let i = startTime; i <= endTime; i += 300000) {
+    for (let i = startTime; i <= endTime; i += 60000) { // 60000 = 1 minute
       labels.push(formatTime(new Date(i)));
     }
+    // but doing this skips the 1
+    console.log(labels);
     return labels;
   };
 
@@ -82,21 +84,41 @@ const TrafficAnalyticsWidget = ({ api }) => {
     chartData.push({ dayLabel, timeRangeLabel, totalApiCalls: 0, totalLatency: 0 });
   }
 
+  const timeChartData = [];
+  for (let i = currentTimeRangeStart; i <= currentTime; i += 60000) {
+    const timeLabel = formatTime(new Date(i));
+    timeChartData.push({ timeLabel, totalApiCalls: 0, totalLatency: 0 });
+  }
+  console.log(timeChartData);
+
   api.endpoints.forEach((endpoint) => {
     endpoint.data.forEach((entry) => {
-      const receivedAt = new Date(entry.receivedAt);
-      if (currentTime - receivedAt <= timeRange) {
-        const dayLabel = receivedAt.toLocaleDateString();
-        const dayIndex = chartData.findIndex((item) => item.dayLabel === dayLabel);
-        if (dayIndex !== -1) {
-          chartData[dayIndex].totalApiCalls++;
-          chartData[dayIndex].totalLatency += entry.latency;
+
+      if (selectedTimeRange === 7 || selectedTimeRange === 30) {
+        const receivedAt = new Date(entry.receivedAt);
+        if (currentTime - receivedAt <= timeRange) {
+          const dayLabel = receivedAt.toLocaleDateString();
+          const dayIndex = chartData.findIndex((item) => item.dayLabel === dayLabel);
+          if (dayIndex !== -1) {
+            chartData[dayIndex].totalApiCalls++;
+            chartData[dayIndex].totalLatency += entry.latency;
+          }
+        }
+      } else {
+        let time = new Date(entry.receivedAt).getTime();
+        time = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        
+        const timeIndex = timeChartData.findIndex((item) => item.timeLabel === time);
+        if (timeIndex !== -1) {
+          timeChartData[timeIndex].totalApiCalls++;
+          timeChartData[timeIndex].totalLatency += entry.latency;
         }
       }
     });
   });
 
   let chartLabels
+  let chartApiCallsData , chartLatencyData
   if (selectedTimeRange === 1) {
     chartLabels = chartData[0].timeRangeLabel;
   } else if (selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
@@ -104,8 +126,14 @@ const TrafficAnalyticsWidget = ({ api }) => {
   } else {
     chartLabels = chartData.map((item) => item.dayLabel);
   }
-  const chartApiCallsData = chartData.map((item) => item.totalApiCalls);
-  const chartLatencyData = chartData.map((item) => item.totalLatency);
+
+  if(selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
+    chartApiCallsData = timeChartData.map((item) => item.totalApiCalls);
+    chartLatencyData = timeChartData.map((item) => item.totalLatency);
+  } else {
+    chartApiCallsData = chartData.map((item) => item.totalApiCalls);
+    chartLatencyData = chartData.map((item) => item.totalLatency);
+  }
 
   const maxApiCalls = Math.max(...chartApiCallsData);
   const maxLatency = Math.max(...chartLatencyData);
@@ -154,7 +182,7 @@ const TrafficAnalyticsWidget = ({ api }) => {
     setLoading(false);
   };
 
-  const maxVisibleLabels = 100;
+  const maxVisibleLabels = 1000;
 
   const options = {
     responsive: true,
