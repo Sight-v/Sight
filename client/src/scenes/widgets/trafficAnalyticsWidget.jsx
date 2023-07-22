@@ -17,9 +17,6 @@ const TrafficAnalyticsWidget = ({ api }) => {
   const medium = palette.neutral.medium;
 
   const [selectedEndpoint, setSelectedEndpoint] = useState("");
-  const [selectedTimezone, setSelectedTimezone] = useState("UTC");
-  const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [selectedResponse, setSelectedResponse] = useState("");
   const [selectedTimeRange, setSelectedTimeRange] = useState(1);
 
   if (!api) return {};
@@ -39,26 +36,11 @@ const TrafficAnalyticsWidget = ({ api }) => {
     return labels;
   };
 
-  const formatTimeRangeLabel = (start, end) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-
-    if (selectedTimeRange === 1) {
-      return `${formatTime(startDate)} - ${formatTime(endDate)}`;
-    } else if (selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
-      return `${formatTime(startDate)} - ${formatTime(endDate)}`;
-    } else {
-      return `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`;
-    }
-  };
-
   const generateMinuteLabels = (startTime, endTime) => {
     const labels = [];
     for (let i = startTime; i <= endTime; i += 60000) { // 60000 = 1 minute
       labels.push(formatTime(new Date(i)));
     }
-    // but doing this skips the 1
-    console.log(labels);
     return labels;
   };
 
@@ -89,8 +71,8 @@ const TrafficAnalyticsWidget = ({ api }) => {
     const timeLabel = formatTime(new Date(i));
     timeChartData.push({ timeLabel, totalApiCalls: 0, totalLatency: 0 });
   }
-  console.log(timeChartData);
 
+  let totalApiCalls = 0;
   api.endpoints.forEach((endpoint) => {
     endpoint.data.forEach((entry) => {
 
@@ -103,31 +85,37 @@ const TrafficAnalyticsWidget = ({ api }) => {
             chartData[dayIndex].totalApiCalls++;
             chartData[dayIndex].totalLatency += entry.latency;
           }
+          console.log(chartData);
         }
       } else {
         let time = new Date(entry.receivedAt).getTime();
         time = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        
+
         const timeIndex = timeChartData.findIndex((item) => item.timeLabel === time);
         if (timeIndex !== -1) {
           timeChartData[timeIndex].totalApiCalls++;
           timeChartData[timeIndex].totalLatency += entry.latency;
+
+          totalApiCalls = 0;
+          timeChartData.forEach((item) => {
+            totalApiCalls += item.totalApiCalls;
+          });
+
         }
       }
     });
   });
 
   let chartLabels
-  let chartApiCallsData , chartLatencyData
-  if (selectedTimeRange === 1) {
-    chartLabels = chartData[0].timeRangeLabel;
-  } else if (selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
+  let chartApiCallsData, chartLatencyData
+  let maxApiCalls, maxLatency, midPointA, midPointB, midPointApiCalls, midPointLatency
+  if (selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
     chartLabels = chartData[0].timeRangeLabel;
   } else {
     chartLabels = chartData.map((item) => item.dayLabel);
   }
 
-  if(selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
+  if (selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
     chartApiCallsData = timeChartData.map((item) => item.totalApiCalls);
     chartLatencyData = timeChartData.map((item) => item.totalLatency);
   } else {
@@ -135,17 +123,17 @@ const TrafficAnalyticsWidget = ({ api }) => {
     chartLatencyData = chartData.map((item) => item.totalLatency);
   }
 
-  const maxApiCalls = Math.max(...chartApiCallsData);
-  const maxLatency = Math.max(...chartLatencyData);
-  const midPointA = (maxApiCalls) / 2;
-  const midPointB = (maxLatency) / 2;
+  maxApiCalls = Math.max(...chartApiCallsData);
+  maxLatency = Math.max(...chartLatencyData);
+  midPointA = (maxApiCalls) / 2;
+  midPointB = (maxLatency) / 2;
 
-  const midPointApiCalls = Math.round((maxApiCalls) + midPointA * 2);
-  const midPointLatency = Math.round((maxLatency) + midPointB * 3);
+  midPointApiCalls = Math.round((maxApiCalls) + midPointA * 2);
+  midPointLatency = Math.round((maxLatency) + midPointB * 3);
 
-  chartLabels.reverse();
-  chartApiCallsData.reverse();
-  chartLatencyData.reverse();
+  // chartLabels.reverse();
+  // chartApiCallsData.reverse();
+  // chartLatencyData.reverse();
 
   const chartDataFinal = {
     labels: chartLabels,
@@ -169,10 +157,6 @@ const TrafficAnalyticsWidget = ({ api }) => {
 
   const handleEndpointChange = (event) => {
     setSelectedEndpoint(event.target.value);
-  };
-
-  const handleTimezoneChange = (event) => {
-    setSelectedTimezone(event.target.value);
   };
 
   const handleTimeRangeFilter = async (hours) => {
@@ -288,11 +272,6 @@ const TrafficAnalyticsWidget = ({ api }) => {
         </FormControl>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <FormControl sx={{ minWidth: "120px" }}>
-            <Select value={selectedTimezone} onChange={handleTimezoneChange} displayEmpty>
-              <MenuItem value="UTC">UTC</MenuItem>
-            </Select>
-          </FormControl>
 
           <FlexBetween sx={{ width: "100%", height: "100%", alignItems: "center", gap: "1rem" }}>
             {["1h", "3h", "12h", "24h", "7d", "30d"].map((range) => (
@@ -312,6 +291,12 @@ const TrafficAnalyticsWidget = ({ api }) => {
         </Box>
       </FlexBetween>
 
+      <FlexBetween gap="1.5rem" pb="1.1rem" sx={{ width: "100%" }}>
+        <Typography variant="h6" sx={{ color: dark }}>
+          Total API Calls: {totalApiCalls}
+        </Typography>
+      </FlexBetween>
+
       <Divider sx={{ my: "1.5rem" }} />
 
       <Box>
@@ -322,9 +307,6 @@ const TrafficAnalyticsWidget = ({ api }) => {
         ) : (
           <React.Fragment>
             <Line data={chartDataFinal} options={options} />
-            <Box sx={{ textAlign: "center", marginTop: "1rem" }}>
-              <Typography variant="subtitle2">{formatTimeRangeLabel(currentTimeRangeStart, currentTime)}</Typography>
-            </Box>
           </React.Fragment>
         )}
       </Box>
