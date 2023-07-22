@@ -5,26 +5,18 @@ import {
     useTheme,
   } from "@mui/material";
   import {
-    Home,
-    Search,
-    Message,
-    DarkMode,
-    LightMode,
-    Notifications,
     Help,
     Settings,
-    Pix,
+    Traffic,
+    Person
   } from "@mui/icons-material";
   import { useDispatch, useSelector } from "react-redux";
-  import { setMode } from "../../state";
-  import { useNavigate } from "react-router-dom";
+  import { useNavigate, useParams } from "react-router-dom";
   import FlexBetween from "../../components/FlexBetween";
-  import Popup from 'reactjs-popup';
-  import SearchUsers from "../../components/popups/searchUsers";
   import UserImage from "../../components/UserImage";
   
   const ApiSidebar = () => {
-    const dispatch = useDispatch();
+    const { apiId } = useParams();
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
   
@@ -34,6 +26,7 @@ import {
     const alt = theme.palette.background.alt;
   
     const fullName = `${user.firstName} ${user.lastName}`;
+    let page = window.location.pathname;
   
     return (
       <Box
@@ -62,7 +55,7 @@ import {
             mb={2}
           >
             <FlexBetween
-              onClick={() => navigate("/chat")}
+              onClick={() => navigate(`/api/${apiId}`)}
               sx={{
                 "&:hover": {
                   cursor: "pointer",
@@ -73,17 +66,18 @@ import {
                 gap: "0.5rem",
                 padding: "8px",
                 borderRadius: "1rem",
+                backgroundColor: page === `/api/${apiId}` ? primaryLight : undefined,
               }}
               width="100%"
             >
-              <Message />
+              <Traffic />
               <Typography fontWeight="semibold" fontSize="1rem" width="100%">
                 Traffic Analytics
               </Typography>
             </FlexBetween>
 
             <FlexBetween
-              onClick={() => navigate("/chat")}
+              onClick={() => navigate(`/apiusers/${apiId}`)}
               sx={{
                 "&:hover": {
                   cursor: "pointer",
@@ -94,10 +88,11 @@ import {
                 gap: "0.5rem",
                 padding: "8px",
                 borderRadius: "1rem",
+                backgroundColor: page === `/apiusers/${apiId}` ? primaryLight : undefined,
               }}
               width="100%"
             >
-              <Message />
+              <Person />
               <Typography fontWeight="semibold" fontSize="1rem" width="100%">
                 User Analytics
               </Typography>

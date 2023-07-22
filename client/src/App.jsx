@@ -4,6 +4,7 @@ import LoginPage from "./scenes/loginPage";
 import ProfilePage from "./scenes/profilePage";
 import SettingsPage from "./scenes/settingsPage";
 import ApiPage from "./scenes/apiPage";
+import UserApiPage from "./scenes/userApiPage";
 
 import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -36,6 +37,10 @@ function App() {
             <Route
               path="/api/:apiId"
               element={isAuth ? <ApiPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/apiusers/:apiId"
+              element={isAuth ? <UserApiPage /> : <Navigate to="/" />}
             />
           </Routes>
         </ThemeProvider>

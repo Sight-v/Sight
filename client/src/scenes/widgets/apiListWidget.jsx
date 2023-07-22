@@ -18,43 +18,65 @@ const ApiListWidget = ({ listData }) => {
 
     return (
         <WidgetWrapper>
-            {/* FIRST ROW */}
-            <FlexBetween gap="0.5rem" pb="1.1rem">
-                <FlexBetween gap="1rem" sx={{ width: "100%" }}>
-                    <Box sx={{ width: "100%" }}>
-                        {listData.map((api) => (
-                            <Box
-                                key={api.id}
-                                display="flex"
-                                justifyContent="space-between" // Align children to the start and end of the container
-                                alignItems="center"
-                                gap="0.5rem"
-                                sx={{
-                                    width: "100%",
-                                    borderBottom: `1px solid ${medium}`,
-                                    py: "0.5rem",
-                                }}
-                            >
-                                <Avatar />
-                                <Typography variant="h6" sx={{ color: dark }}>
-                                    {api.user}
-                                </Typography>
-                                <Box display="flex" alignItems="center" gap="0.5rem">
-                                    <Typography variant="h6" sx={{ color: dark }}>
-                                        {api.endpoint}
+            <Box sx={{ padding: "1rem" }}>
+                {/* FIRST ROW */}
+                <FlexBetween gap="0.5rem" pb="1.1rem">
+                    <FlexBetween gap="1rem" sx={{ width: "100%" }}>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                height: "100%",
+                                maxHeight: "50vh",
+                                overflowY: "scroll",
+                                "&::-webkit-scrollbar": {
+                                    width: "0.5rem",
+                                },
+                                "&::-webkit-scrollbar-track": {
+                                    background: "transparent",
+                                },
+                                "&::-webkit-scrollbar-thumb": {
+                                    background: main,
+                                    borderRadius: "1rem",
+                                },
+                            }}
+                        >
+                            {listData.map((api) => (
+                                <Box
+                                    key={api.id}
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    gap="0.5rem"
+                                    sx={{
+                                        width: "100%",
+                                        borderBottom: `1px solid ${medium}`,
+                                        py: "0.5rem",
+                                    }}
+                                >
+                                    <Typography variant="h6" fontWeight="bold" sx={{ color: dark }}>
+                                        {api.time}
                                     </Typography>
-                                    <Typography variant="h6" sx={{ color: medium }}>
-                                        {api.status}
+                                    <Avatar />
+                                    <Typography variant="h6" fontWeight="bold" sx={{ color: dark }}>
+                                        {api.user}
                                     </Typography>
-                                    <Typography variant="h6" sx={{ color: medium }}>
-                                        {api.latency}
-                                    </Typography>
+                                    <Box display="flex" alignItems="center" gap="0.5rem">
+                                        <Typography variant="h6" sx={{ color: dark, fontWeight: "bold" }}>
+                                            {api.endpoint}
+                                        </Typography>
+                                        <Typography variant="h6" sx={{ color: medium }}>
+                                            {api.status}
+                                        </Typography>
+                                        <Typography variant="h6" sx={{ color: medium }}>
+                                            {api.latency}
+                                        </Typography>
+                                    </Box>
                                 </Box>
-                            </Box>
-                        ))}
-                    </Box>
+                            ))}
+                        </Box>
+                    </FlexBetween>
                 </FlexBetween>
-            </FlexBetween>
+            </Box>
         </WidgetWrapper>
     );
 };

@@ -69,8 +69,9 @@ const TrafficAnalyticsWidget = ({ api }) => {
 
   const timeChartData = [];
   for (let i = currentTimeRangeStart; i <= currentTime; i += 60000) {
+    const dayLabel = new Date(i).toLocaleDateString();
     const timeLabel = formatTime(new Date(i));
-    timeChartData.push({ timeLabel, totalApiCalls: 0, totalLatency: 0 });
+    timeChartData.push({ dayLabel, timeLabel, totalApiCalls: 0, totalLatency: 0 });
   }
 
   let totalApiCalls = 0;
@@ -91,24 +92,36 @@ const TrafficAnalyticsWidget = ({ api }) => {
       } else {
         let time = new Date(entry.receivedAt).getTime();
         time = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-
+        const todaysDate = new Date().toLocaleDateString();
         const timeIndex = timeChartData.findIndex((item) => item.timeLabel === time);
-        if (timeIndex !== -1) {
-          timeChartData[timeIndex].totalApiCalls++;
-          timeChartData[timeIndex].totalLatency += entry.latency;
 
-          totalApiCalls = 0;
-          timeChartData.forEach((item) => {
-            totalApiCalls += item.totalApiCalls;       
-          });
+        const DateFromEntry = new Date(entry.receivedAt).toLocaleDateString();
+        console.log(DateFromEntry, todaysDate)
 
-          let data = {
-            user: entry.user,
-            endpoint: endpoint.endpoint,
-            status: entry.statusCode,
-            latency: entry.latency,
+        if ((DateFromEntry === todaysDate) || selectedTimeRange === 24) {
+          if (timeIndex !== -1) {
+            console.log(entry)
+            timeChartData[timeIndex].totalApiCalls++;
+            timeChartData[timeIndex].totalLatency += entry.latency;
+
+            totalApiCalls = 0;
+            timeChartData.forEach((item) => {
+              totalApiCalls += item.totalApiCalls;
+            });
+
+            let date = entry.receivedAt;
+            // now date is a date object so convert it to string and readable format
+            date = new Date(date).toLocaleDateString();
+
+            let data = {
+              time: date,
+              user: entry.user,
+              endpoint: endpoint.endpoint,
+              status: entry.statusCode,
+              latency: entry.latency,
+            }
+            completeData.push(data);
           }
-          completeData.push(data);
         }
       }
     });
@@ -124,7 +137,17 @@ const TrafficAnalyticsWidget = ({ api }) => {
   }
 
   if (selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
-    chartApiCallsData = timeChartData.map((item) => item.totalApiCalls);
+    chartApiCallsData = timeChartData.map((item) => {
+      // only return if its of current day for 1h, 3h, 12h
+      const todaysDate = new Date().toLocaleDateString();
+      const checkDate = timeChartData.findIndex((item) => {
+        console.log(item.dayLabel, todaysDate)
+        return item.dayLabel === todaysDate;
+      });
+      if (checkDate === 0) {
+        return item.totalApiCalls;
+      }
+    });
     chartLatencyData = timeChartData.map((item) => item.totalLatency);
   } else {
     chartApiCallsData = chartData.map((item) => item.totalApiCalls);
