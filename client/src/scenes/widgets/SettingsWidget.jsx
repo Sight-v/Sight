@@ -154,7 +154,7 @@ const SettingsWidget = ({ userId }) => {
                                         cursor: "pointer",
                                     },
                                 }}
-                                onClick={() => navigate(`/profile/${userId}`)}
+                                onClick={() => navigate("/home")}
                             >
                                 {firstName} {lastName}
                             </Typography>

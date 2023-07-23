@@ -140,7 +140,7 @@ const Form = () => {
           token: loggedIn.token,
         })
       );
-      navigate("/profile/" + loggedIn.user._id);
+      navigate("/home");
     }
   };
 

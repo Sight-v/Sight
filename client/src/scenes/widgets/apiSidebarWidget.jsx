@@ -120,7 +120,7 @@ import {
             </FlexBetween>
   
             <FlexBetween
-              onClick={() => navigate("/bounty")}
+              onClick={() => navigate("/help")}
               sx={{
                 "&:hover": {
                   cursor: "pointer",
@@ -143,7 +143,7 @@ import {
         </Box>
         <Box px={2} pb={2} width="100%" textAlign="left">
           <FlexBetween
-            onClick={() => navigate(`/profile/${user._id}`)}
+            onClick={() => navigate("/home")}
             sx={{
               "&:hover": {
                 cursor: "pointer",

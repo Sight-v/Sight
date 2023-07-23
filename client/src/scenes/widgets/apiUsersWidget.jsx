@@ -1,9 +1,20 @@
 import { useState } from "react";
-import { Box, Typography, Divider, useTheme, FormControl, Select, MenuItem, Button, CircularProgress } from "@mui/material";
+import {
+    Box,
+    Typography,
+    Divider,
+    useTheme,
+    FormControl,
+    Select,
+    MenuItem,
+    Button,
+    CircularProgress,
+} from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import ApiListWidget from "./apiListWidget";
 
 const ApiUsersWidget = ({ api }) => {
     console.log(api);
@@ -23,7 +34,6 @@ const ApiUsersWidget = ({ api }) => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         setLoading(false);
     };
-
     const currentTime = Date.now();
     const timeRange = selectedTimeRange * 24 * 60 * 60 * 1000;
 
@@ -54,8 +64,8 @@ const ApiUsersWidget = ({ api }) => {
         currentTimeRangeStart = currentTime - 10800000;
     } else if (selectedTimeRange === 12) {
         currentTimeRangeStart = currentTime - 43200000;
-    } else if (selectedTimeRange === 24) {
-        currentTimeRangeStart = currentTime - 86400000;
+    } else if (selectedTimeRange === 2) {
+        currentTimeRangeStart = currentTime - 172800000;
     } else if (selectedTimeRange === 7) {
         currentTimeRangeStart = currentTime - 604800000;
     } else if (selectedTimeRange === 30) {
@@ -65,7 +75,7 @@ const ApiUsersWidget = ({ api }) => {
     const chartData = [];
     for (let i = currentTimeRangeStart; i <= currentTime; i += 86400000) {
         const dayLabel = new Date(i).toLocaleDateString();
-        const timeRangeLabel = selectedTimeRange === 1 ? generateMinuteLabels(i, i + 3600000) : selectedTimeRange === 3 ? generateMinuteLabels(i, i + 10800000) : selectedTimeRange === 12 ? generateMinuteLabels(i, i + 43200000) : selectedTimeRange === 24 ? generateMinuteLabels(i, i + 86400000) : generateTimeLabels(i, i + 86400000);
+        const timeRangeLabel = selectedTimeRange === 1 ? generateMinuteLabels(i, i + 3600000) : selectedTimeRange === 3 ? generateMinuteLabels(i, i + 10800000) : selectedTimeRange === 12 ? generateMinuteLabels(i, i + 43200000) : generateTimeLabels(i, i + 86400000);
         chartData.push({ dayLabel, timeRangeLabel, totalApiCalls: 0, totalLatency: 0 });
     }
 
@@ -76,11 +86,11 @@ const ApiUsersWidget = ({ api }) => {
         timeChartData.push({ dayLabel, timeLabel, totalApiCalls: 0, totalLatency: 0 });
     }
 
-    let activeUsers = 0;
     let totalUsers = 0;
+    let completeData = []
     api.endpoints.forEach((endpoint) => {
         endpoint.data.forEach((entry) => {
-            if (selectedTimeRange === 7 || selectedTimeRange === 30) {
+            if (selectedTimeRange === 2 || selectedTimeRange === 7 || selectedTimeRange === 30) {
                 const receivedAt = new Date(entry.receivedAt);
                 if (currentTime - receivedAt <= timeRange) {
                     const dayLabel = receivedAt.toLocaleDateString();
@@ -88,11 +98,19 @@ const ApiUsersWidget = ({ api }) => {
                     if (dayIndex !== -1) {
                         chartData[dayIndex].totalApiCalls++;
                         chartData[dayIndex].totalLatency += entry.latency;
-
-                        if (entry.user !== "Anonymous") {
-                            activeUsers++;
-                        }
                         totalUsers++;
+
+                        let date = entry.receivedAt;
+                        date = new Date(date).toLocaleDateString();
+
+                        let data = {
+                            time: date,
+                            user: entry.user,
+                            endpoint: endpoint.endpoint,
+                            status: entry.statusCode,
+                            latency: entry.latency,
+                        }
+                        completeData.push(data);
                     }
                 }
             } else {
@@ -101,17 +119,23 @@ const ApiUsersWidget = ({ api }) => {
                 const todaysDate = new Date().toLocaleDateString();
                 const timeIndex = timeChartData.findIndex((item) => item.timeLabel === time);
 
-                const checkDate = timeChartData.findIndex((item) => {
-                    return item.dayLabel === todaysDate;
-                });
+                const DateFromEntry = new Date(entry.receivedAt).toLocaleDateString();
 
-                if (checkDate === 0 || selectedTimeRange === 24) {
+                if ((DateFromEntry === todaysDate) || selectedTimeRange === 24) {
                     if (timeIndex !== -1) {
-                        console.log(entry)
-                        if (entry.user !== "Anonymous") {
-                            activeUsers++;
-                        }
                         totalUsers++;
+
+                        let date = entry.receivedAt;
+                        date = new Date(date).toLocaleDateString();
+
+                        let data = {
+                            time: date,
+                            user: entry.user,
+                            endpoint: endpoint.endpoint,
+                            status: entry.statusCode,
+                            latency: entry.latency,
+                        }
+                        completeData.push(data);
                     }
                 }
             }
@@ -120,49 +144,61 @@ const ApiUsersWidget = ({ api }) => {
 
     return (
         <WidgetWrapper>
-            <FlexBetween gap="1.5rem" pb="1.1rem" sx={{ width: "100%" }}>
-                <FlexBetween sx={{ width: "100%", height: "100%", alignItems: "center", gap: "1rem" }}>
-                    {["1h", "3h", "12h", "24h", "7d", "30d"].map((range) => (
-                        <Button
-                            key={range}
-                            variant={selectedTimeRange === parseInt(range) ? "contained" : "outlined"}
-                            onClick={() => {
-                                handleTimeRangeFilter(parseInt(range))
-                            }}
-                            sx={{
-                                height: "3rem",
-                                width: "2rem",
-                            }}
-                        >
-                            {range}
-                        </Button>
-                    ))}
-                </FlexBetween>
-            </FlexBetween>
-            <Divider />
-            {/* make 2 boxes one for active users and one for total users */}
-            <FlexBetween gap="1.5rem" pb="1.1rem" sx={{ width: "100%" }}>
-                <FlexBetween sx={{ width: "100%", height: "100%", alignItems: "center", gap: "1rem" }}>
-                    <Typography variant="h6" sx={{ color: dark, fontWeight: "bold" }}>
-                        Active Users
+            <Box sx={{ px: "1.5rem" }}>
+                <Box py="1.5rem">
+                    <Typography variant="h5" sx={{ color: dark, fontWeight: "bold" }}>
+                        API Users Statistics
                     </Typography>
-                    <Typography variant="h6" sx={{ color: dark, fontWeight: "bold" }}>
-                        {activeUsers}
+                    <Typography variant="subtitle1" sx={{ color: medium }}>
+                        Data for the selected time range.
                     </Typography>
-                </FlexBetween>
-            </FlexBetween>
-            <Divider />
-            <FlexBetween gap="1.5rem" pb="1.1rem" sx={{ width: "100%" }}>
-                <FlexBetween sx={{ width: "100%", height: "100%", alignItems: "center", gap: "1rem" }}>
-                    <Typography variant="h6" sx={{ color: dark, fontWeight: "bold" }}>
-                        Total Users
-                    </Typography>
-                    <Typography variant="h6" sx={{ color: dark, fontWeight: "bold" }}>
-                        {totalUsers}
-                    </Typography>
-                </FlexBetween>
-            </FlexBetween>
-        </WidgetWrapper >
+                </Box>
+
+                <Box py="1rem">
+                    <FlexBetween sx={{ gap: "1rem" }}>
+                        {["1h", "3h", "12h", "2d", "7d", "30d"].map((range) => (
+                            <Button
+                                key={range}
+                                variant={selectedTimeRange === parseInt(range) ? "contained" : "outlined"}
+                                onClick={() => {
+                                    handleTimeRangeFilter(parseInt(range));
+                                }}
+                            >
+                                {range}
+                            </Button>
+                        ))}
+                    </FlexBetween>
+                </Box>
+
+                {loading && (
+                    <Box display="flex" justifyContent="center" alignItems="center" py="1rem">
+                        <CircularProgress />
+                    </Box>
+                )}
+            </Box>
+
+            {!loading && (
+                <>
+                    <Box sx={{ px: "1.5rem" }}>
+                    <Divider />
+
+                    {/* Total Users */}
+                    <Box py="1.5rem">
+                        <Typography variant="h6" sx={{ color: dark, fontWeight: "bold" }}>
+                            Total Users
+                        </Typography>
+                        <Typography variant="body1" sx={{ color: dark }}>
+                            {totalUsers}
+                        </Typography>
+                    </Box>
+
+                    <Divider />
+                    </Box>
+
+                    <ApiListWidget listData={completeData} />
+                </>
+            )}
+        </WidgetWrapper>
     );
 };
 

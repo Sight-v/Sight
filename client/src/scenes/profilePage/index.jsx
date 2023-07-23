@@ -10,7 +10,8 @@ import UserApiWidget from "../widgets/UserApiWidget";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
-  const { userId } = useParams();
+  const userId = useSelector((state) => state.user._id);
+  console.log(userId);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 

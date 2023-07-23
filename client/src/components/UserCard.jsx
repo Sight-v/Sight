@@ -16,7 +16,7 @@ const UserCard = ({ userId, name, subtitle, userPictureUrl }) => {
         <UserImage image={userPictureUrl} size="55px" />
         <Box
           onClick={() => {
-            navigate(`/profile/${userId}`);
+            navigate(`/home`);
             navigate(0);
           }}
         >

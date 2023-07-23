@@ -83,7 +83,7 @@ const ChatUsers = ({ user, update, mainUser, setChild2Data }) => {
 
                 onClick={() => {
                     if (page !== "/chat") {
-                        navigate(`/profile/${user._id}`);
+                        navigate(`/home`);
                         navigate(0);
                     }
                 }}

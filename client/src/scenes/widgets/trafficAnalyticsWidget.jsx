@@ -52,8 +52,8 @@ const TrafficAnalyticsWidget = ({ api }) => {
     currentTimeRangeStart = currentTime - 10800000;
   } else if (selectedTimeRange === 12) {
     currentTimeRangeStart = currentTime - 43200000;
-  } else if (selectedTimeRange === 24) {
-    currentTimeRangeStart = currentTime - 86400000;
+  } else if (selectedTimeRange === 2) {
+    currentTimeRangeStart = currentTime - 172800000;
   } else if (selectedTimeRange === 7) {
     currentTimeRangeStart = currentTime - 604800000;
   } else if (selectedTimeRange === 30) {
@@ -63,7 +63,7 @@ const TrafficAnalyticsWidget = ({ api }) => {
   const chartData = [];
   for (let i = currentTimeRangeStart; i <= currentTime; i += 86400000) {
     const dayLabel = new Date(i).toLocaleDateString();
-    const timeRangeLabel = selectedTimeRange === 1 ? generateMinuteLabels(i, i + 3600000) : selectedTimeRange === 3 ? generateMinuteLabels(i, i + 10800000) : selectedTimeRange === 12 ? generateMinuteLabels(i, i + 43200000) : selectedTimeRange === 24 ? generateMinuteLabels(i, i + 86400000) : generateTimeLabels(i, i + 86400000);
+    const timeRangeLabel = selectedTimeRange === 1 ? generateMinuteLabels(i, i + 3600000) : selectedTimeRange === 3 ? generateMinuteLabels(i, i + 10800000) : selectedTimeRange === 12 ? generateMinuteLabels(i, i + 43200000) : generateTimeLabels(i, i + 86400000);
     chartData.push({ dayLabel, timeRangeLabel, totalApiCalls: 0, totalLatency: 0 });
   }
 
@@ -79,7 +79,7 @@ const TrafficAnalyticsWidget = ({ api }) => {
   api.endpoints.forEach((endpoint) => {
     endpoint.data.forEach((entry) => {
 
-      if (selectedTimeRange === 7 || selectedTimeRange === 30) {
+      if (selectedTimeRange === 2 || selectedTimeRange === 7 || selectedTimeRange === 30) {
         const receivedAt = new Date(entry.receivedAt);
         if (currentTime - receivedAt <= timeRange) {
           const dayLabel = receivedAt.toLocaleDateString();
@@ -87,6 +87,19 @@ const TrafficAnalyticsWidget = ({ api }) => {
           if (dayIndex !== -1) {
             chartData[dayIndex].totalApiCalls++;
             chartData[dayIndex].totalLatency += entry.latency;
+
+            let date = entry.receivedAt;
+            // now date is a date object so convert it to string and readable format
+            date = new Date(date).toLocaleDateString();
+
+            let data = {
+              time: date,
+              user: entry.user,
+              endpoint: endpoint.endpoint,
+              status: entry.statusCode,
+              latency: entry.latency,
+            }
+            completeData.push(data);
           }
         }
       } else {
@@ -98,7 +111,7 @@ const TrafficAnalyticsWidget = ({ api }) => {
         const DateFromEntry = new Date(entry.receivedAt).toLocaleDateString();
         console.log(DateFromEntry, todaysDate)
 
-        if ((DateFromEntry === todaysDate) || selectedTimeRange === 24) {
+        if ((DateFromEntry === todaysDate)) {
           if (timeIndex !== -1) {
             console.log(entry)
             timeChartData[timeIndex].totalApiCalls++;
@@ -130,15 +143,14 @@ const TrafficAnalyticsWidget = ({ api }) => {
   let chartLabels
   let chartApiCallsData, chartLatencyData
   let maxApiCalls, maxLatency, midPointA, midPointB, midPointApiCalls, midPointLatency
-  if (selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
+  if (selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12) {
     chartLabels = chartData[0].timeRangeLabel;
   } else {
     chartLabels = chartData.map((item) => item.dayLabel);
   }
 
-  if (selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12 || selectedTimeRange === 24) {
+  if (selectedTimeRange === 1 || selectedTimeRange === 3 || selectedTimeRange === 12) {
     chartApiCallsData = timeChartData.map((item) => {
-      // only return if its of current day for 1h, 3h, 12h
       const todaysDate = new Date().toLocaleDateString();
       const checkDate = timeChartData.findIndex((item) => {
         console.log(item.dayLabel, todaysDate)
@@ -305,7 +317,7 @@ const TrafficAnalyticsWidget = ({ api }) => {
         <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
 
           <FlexBetween sx={{ width: "100%", height: "100%", alignItems: "center", gap: "1rem" }}>
-            {["1h", "3h", "12h", "24h", "7d", "30d"].map((range) => (
+            {["1h", "3h", "12h", "2d", "7d", "30d"].map((range) => (
               <Button
                 key={range}
                 variant={selectedTimeRange === parseInt(range) ? "contained" : "outlined"}

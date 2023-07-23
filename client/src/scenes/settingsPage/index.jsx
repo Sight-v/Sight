@@ -9,16 +9,12 @@ import SettingsSidebarWidget from "../../scenes/widgets/SettingsSidebarWidget";
 
 const SettingsPage = () => {
   const [user, setUser] = useState(null);
-  const { userId } = useParams();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
   const { _id } = useSelector((state) => state.user);
-  
-  if (userId !== _id) {
-    navigate(`/profile/${userId}`);
-  }
+
 
   const getUser = async () => {
     const response = await fetch(`http://localhost:3001/users/${_id}`, {

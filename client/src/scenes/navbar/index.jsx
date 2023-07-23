@@ -11,23 +11,16 @@ import {
   useMediaQuery
 } from "@mui/material";
 import {
-  Search,
-  Message,
   DarkMode,
   LightMode,
-  Notifications,
-  Help,
   Menu,
   Close,
   Settings,
-  Pix,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "../../state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "../../components/FlexBetween";
-import Popup from 'reactjs-popup';
-import SearchUsers from "../../components/popups/searchUsers";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -40,7 +33,6 @@ const Navbar = () => {
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
@@ -50,19 +42,6 @@ const Navbar = () => {
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
       <FlexBetween gap="1.75rem">
-        {/* <Typography
-          fontWeight="bold"
-          fontSize="clamp(1rem, 2rem, 2.25rem)"
-          color="primary"
-          onClick={() => navigate("/home")}
-          sx={{
-            "&:hover": {
-              color: primaryLight,
-              cursor: "pointer",
-            },
-          }}
-        >
-        </Typography> */}
         <a href="/home">
           <img src="https://cdn.discordapp.com/attachments/1096673366485782588/1117772388327768134/quakelogo.png" alt="Quake Logo" width="100vw" height="auto" />
         </a>
@@ -72,53 +51,20 @@ const Navbar = () => {
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
-          <Popup trigger=
-            {
-              <IconButton>
-                <Search sx={{ fontSize: "25px" }} />
-              </IconButton>
-            }
-            modal nested>
-            {close => (
-              <div className='modal'>
-                <div className='content'>
-                  <SearchUsers userId={user._id} close={close} />
-                </div>
-              </div>
-            )}
-          </Popup>
-          {page !== "/home" && (
-            <Box display="flex" gap="2rem">
-              <IconButton onClick={() => dispatch(setMode())}>
-                {theme.palette.mode === "dark" ? (
-                  <DarkMode sx={{ fontSize: "25px" }} />
-                ) : (
-                  <LightMode sx={{ color: dark, fontSize: "25px" }} />
-                )}
-              </IconButton>
-              <IconButton
-                onClick={() => navigate(`/settings/${user._id}`)}
-              >
-                <Settings sx={{ fontSize: "25px" }} />
-              </IconButton>
-              <IconButton
-                onClick={() => navigate("/chat")}
-              >
-                <Message sx={{ fontSize: "25px" }} />
-              </IconButton>
-              <IconButton
-                onClick={() => navigate("/bounty")}
-              >
-                <Pix sx={{ fontSize: "25px" }} />
-              </IconButton>
-              <IconButton>
-                <Notifications sx={{ fontSize: "25px" }} />
-              </IconButton>
-              <IconButton>
-                <Help sx={{ fontSize: "25px" }} />
-              </IconButton>
-            </Box>
-          )}
+          <Box display="flex" gap="2rem">
+            <IconButton onClick={() => dispatch(setMode())}>
+              {theme.palette.mode === "dark" ? (
+                <DarkMode sx={{ fontSize: "25px" }} />
+              ) : (
+                <LightMode sx={{ color: dark, fontSize: "25px" }} />
+              )}
+            </IconButton>
+            <IconButton
+              onClick={() => navigate(`/settings/${user._id}`)}
+            >
+              <Settings sx={{ fontSize: "25px" }} />
+            </IconButton>
+          </Box>
           <FormControl variant="standard" value={fullName}>
             <Select
               value={fullName}
@@ -191,23 +137,6 @@ const Navbar = () => {
             alignItems="center"
             gap="3rem"
           >
-
-            <Popup trigger=
-              {
-                <IconButton>
-                  <Search sx={{ fontSize: "25px" }} />
-                </IconButton>
-              }
-              modal nested
-            >
-              {close => (
-                <div className='modal'>
-                  <div className='content'>
-                    <SearchUsers userId={user._id} close={close} />
-                  </div>
-                </div>
-              )}
-            </Popup>
             <IconButton
               onClick={() => dispatch(setMode())}
               sx={{ fontSize: "25px" }}
@@ -222,22 +151,6 @@ const Navbar = () => {
               onClick={() => navigate(`/settings/${user._id}`)}
             >
               <Settings sx={{ fontSize: "25px" }} />
-            </IconButton>
-            <IconButton
-              onClick={() => navigate("/chat")}
-            >
-              <Message sx={{ fontSize: "25px" }} />
-            </IconButton>
-            <IconButton
-              onClick={() => navigate("/bounty")}
-            >
-              <Pix sx={{ fontSize: "25px" }} />
-            </IconButton>
-            <IconButton>
-              <Notifications sx={{ fontSize: "25px" }} />
-            </IconButton>
-            <IconButton>
-              <Help sx={{ fontSize: "25px" }} />
             </IconButton>
             <FormControl variant="standard" value={fullName}>
               <Select
