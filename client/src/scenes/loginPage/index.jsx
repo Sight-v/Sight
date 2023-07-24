@@ -13,7 +13,7 @@ const LoginPage = () => {
         textAlign="center"
       >
         {/* <Typography fontWeight="bold" fontSize="32px" color="primary">
-          Trapi
+          Sight
         </Typography> */}
         <img src="https://cdn.discordapp.com/attachments/1096673366485782588/1117772388327768134/Trapilogo.png" alt="Quake Logo" width="120vw" height="auto" />
         {/* since this doesnt load the image we will */}
@@ -27,7 +27,7 @@ const LoginPage = () => {
         backgroundColor={theme.palette.background.alt}
       >
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-          Welcome to Trapi ! Hope you enjoy your stay.
+          Welcome to Sight ! Hope you enjoy your stay.
         </Typography>
         <Form />
       </Box>
