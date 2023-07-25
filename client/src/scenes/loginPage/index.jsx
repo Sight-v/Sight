@@ -15,7 +15,7 @@ const LoginPage = () => {
         {/* <Typography fontWeight="bold" fontSize="32px" color="primary">
           Sight
         </Typography> */}
-        <img src="https://cdn.discordapp.com/attachments/1096673366485782588/1117772388327768134/Trapilogo.png" alt="Quake Logo" width="120vw" height="auto" />
+        <img src="https://cdn.discordapp.com/attachments/1133092727127548015/1133378015229915197/name_logo.png" alt="Sight Logo" width="120vw" height="auto" />
         {/* since this doesnt load the image we will */}
       </Box>
 

@@ -43,7 +43,7 @@ const Navbar = () => {
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
       <FlexBetween gap="1.75rem">
         <a href="/home">
-          <img src="https://cdn.discordapp.com/attachments/1096673366485782588/1117772388327768134/quakelogo.png" alt="Quake Logo" width="100vw" height="auto" />
+          <img src="https://cdn.discordapp.com/attachments/1133092727127548015/1133378015229915197/name_logo.png" alt="Sight Logo" width="100vw" height="auto" />
         </a>
       </FlexBetween>
 
