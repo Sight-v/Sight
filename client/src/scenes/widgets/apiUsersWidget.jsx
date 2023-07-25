@@ -17,7 +17,6 @@ import React from "react";
 import ApiListWidget from "./apiListWidget";
 
 const ApiUsersWidget = ({ api }) => {
-    console.log(api);
     const { palette } = useTheme();
     const navigate = useNavigate();
     const dark = palette.neutral.dark;

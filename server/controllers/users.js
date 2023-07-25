@@ -13,7 +13,6 @@ export const getUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    console.log("getAllUsers");
     const users = await User.find();
     res.status(200).json(users);
   } catch (err) {

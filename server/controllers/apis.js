@@ -1,14 +1,10 @@
 import Api from "../models/Apis.js";
 import User from "../models/User.js";
 
-import { ObjectId } from "mongoose";
-
 export const addApi = async (req, res) => {
     const { host_id, user, endpoint, latency, statusCode } = req.body;
     const endpointWithoutQueryParams = endpoint.split('?')[0];
     const name = endpoint.split('/')[0];
-
-    console.log('host_id', host_id);
 
     try {
         const existingApiByName = await Api.findOne({ name: name });

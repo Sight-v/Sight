@@ -37,7 +37,6 @@ const UserWidget = ({ user }) => {
   const userId = user._id;
   const asterisks = "*";
   const asterisksUserId = asterisks.repeat(userId.length);
-  console.log(asterisksUserId);
 
   const handleShowId = () => {
     setShowId(!showId);

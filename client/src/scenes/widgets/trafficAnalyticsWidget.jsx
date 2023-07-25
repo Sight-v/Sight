@@ -109,11 +109,9 @@ const TrafficAnalyticsWidget = ({ api }) => {
         const timeIndex = timeChartData.findIndex((item) => item.timeLabel === time);
 
         const DateFromEntry = new Date(entry.receivedAt).toLocaleDateString();
-        console.log(DateFromEntry, todaysDate)
 
         if ((DateFromEntry === todaysDate)) {
           if (timeIndex !== -1) {
-            console.log(entry)
             timeChartData[timeIndex].totalApiCalls++;
             timeChartData[timeIndex].totalLatency += entry.latency;
 
@@ -153,7 +151,6 @@ const TrafficAnalyticsWidget = ({ api }) => {
     chartApiCallsData = timeChartData.map((item) => {
       const todaysDate = new Date().toLocaleDateString();
       const checkDate = timeChartData.findIndex((item) => {
-        console.log(item.dayLabel, todaysDate)
         return item.dayLabel === todaysDate;
       });
       if (checkDate === 0) {

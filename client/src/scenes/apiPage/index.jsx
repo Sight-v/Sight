@@ -22,7 +22,6 @@ const ApiPage = () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
-    console.log(data);
     setApi(data);
   };
 

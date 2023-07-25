@@ -1,7 +1,6 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 
 import Navbar from "../../scenes/navbar";
 import UserWidget from "../../scenes/widgets/UserWidget";
@@ -11,7 +10,6 @@ import UserApiWidget from "../widgets/UserApiWidget";
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const userId = useSelector((state) => state.user._id);
-  console.log(userId);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 

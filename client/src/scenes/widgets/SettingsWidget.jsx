@@ -59,7 +59,6 @@ const SettingsWidget = ({ userId }) => {
         });
         const data = await response.json();
         setUser(data);
-        console.log(data);
         setNewUser({
             firstName: data.firstName,
             lastName: data.lastName,
