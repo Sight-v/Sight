@@ -61,9 +61,6 @@ const UserApiWidget = ({ user }) => {
                                 <Typography variant="h6" sx={{ color: dark }}>
                                     {api.name}
                                 </Typography>
-                                <Typography variant="body1" sx={{ color: dark }}>
-                                    Total Requests: {api.totalRequests}
-                                </Typography>
                             </Box>
                         ))}
                     </Box>

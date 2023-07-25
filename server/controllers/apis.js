@@ -63,8 +63,7 @@ export const addApi = async (req, res) => {
 
             host.pendingApis.push({
                 id: api._id,
-                name: api.name,
-                totalRequests: api.totalRequests
+                name: api.name
             });
 
             await host.save();
