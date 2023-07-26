@@ -51,7 +51,22 @@ const ApiPage = () => {
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
           {api !== null ? (
-            <TrafficAnalyticsWidget api={api} />
+            <Box
+              width="100%"
+              height="100%"
+
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              borderRadius="1rem"
+
+              sx={{
+                overflowY: "scroll",
+                height: "calc(90vh - 6rem)",
+              }}
+            >
+              <TrafficAnalyticsWidget api={api} />
+            </Box>
           ) : (
             <p>Loading...</p>
           )}

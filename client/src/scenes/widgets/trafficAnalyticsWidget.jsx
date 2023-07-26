@@ -12,10 +12,8 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const TrafficAnalyticsWidget = ({ api }) => {
   const { palette } = useTheme();
-  const navigate = useNavigate();
   const dark = palette.neutral.dark;
   const [loading, setLoading] = useState(false);
-  const medium = palette.neutral.medium;
 
   const [selectedEndpoint, setSelectedEndpoint] = useState("");
   const [selectedTimeRange, setSelectedTimeRange] = useState(1);
@@ -88,8 +86,11 @@ const TrafficAnalyticsWidget = ({ api }) => {
             chartData[dayIndex].totalApiCalls++;
             chartData[dayIndex].totalLatency += entry.latency;
 
+            chartData.forEach((item) => {
+              totalApiCalls += item.totalApiCalls;
+            });
+
             let date = entry.receivedAt;
-            // now date is a date object so convert it to string and readable format
             date = new Date(date).toLocaleDateString();
 
             let data = {
@@ -115,7 +116,6 @@ const TrafficAnalyticsWidget = ({ api }) => {
             timeChartData[timeIndex].totalApiCalls++;
             timeChartData[timeIndex].totalLatency += entry.latency;
 
-            totalApiCalls = 0;
             timeChartData.forEach((item) => {
               totalApiCalls += item.totalApiCalls;
             });
@@ -335,7 +335,10 @@ const TrafficAnalyticsWidget = ({ api }) => {
 
       <FlexBetween gap="1.5rem" pb="1.1rem" sx={{ width: "100%" }}>
         <Typography variant="h6" sx={{ color: dark }}>
-          Total API Calls: {totalApiCalls}
+          Total API Calls: {api.totalRequests}
+        </Typography>
+        <Typography variant="h6" sx={{ color: dark }}>
+          Selected API Calls: {totalApiCalls}
         </Typography>
       </FlexBetween>
 

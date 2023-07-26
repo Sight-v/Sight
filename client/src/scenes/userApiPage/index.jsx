@@ -51,7 +51,22 @@ const UserApiPage = () => {
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
           {api !== null ? (
-            <ApiUsersWidget api={api} />
+            <Box
+              width="100%"
+              height="100%"
+
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              borderRadius="1rem"
+
+              sx={{
+                overflowY: "scroll",
+                height: "calc(90vh - 6rem)",
+              }}
+            >
+              <ApiUsersWidget api={api} />
+            </Box>
           ) : (
             <p>Loading...</p>
           )}
