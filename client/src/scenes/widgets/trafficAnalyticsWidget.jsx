@@ -358,7 +358,17 @@ const TrafficAnalyticsWidget = ({ api }) => {
 
       <Divider sx={{ my: "1.5rem" }} />
 
-      <ApiListWidget listData={completeData} />
+      <FlexBetween gap="1.5rem" pb="1.1rem" sx={{ width: "100%" }}>
+        {completeData.length > 0 && (
+          <Box sx={{ width: "100%" }}>
+            <Typography variant="h6" sx={{ color: dark }}>
+              User API Calls
+            </Typography>
+            <ApiListWidget listData={completeData} />
+          </Box>
+        )}
+      </FlexBetween>
+
 
     </WidgetWrapper>
   );

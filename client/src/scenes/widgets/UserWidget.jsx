@@ -115,7 +115,7 @@ const UserWidget = ({ user }) => {
           </IconButton>
           {isCopied && (
             <Typography variant="body2" color="success">
-              Copied user ID!
+              Copied User Token
             </Typography>
           )}
         </Box>

@@ -60,7 +60,7 @@ const Navbar = () => {
               )}
             </IconButton>
             <IconButton
-              onClick={() => navigate(`/settings/${user._id}`)}
+              onClick={() => navigate(`/settings`)}
             >
               <Settings sx={{ fontSize: "25px" }} />
             </IconButton>
@@ -148,7 +148,7 @@ const Navbar = () => {
               )}
             </IconButton>
             <IconButton
-              onClick={() => navigate(`/settings/${user._id}`)}
+              onClick={() => navigate(`/settings`)}
             >
               <Settings sx={{ fontSize: "25px" }} />
             </IconButton>

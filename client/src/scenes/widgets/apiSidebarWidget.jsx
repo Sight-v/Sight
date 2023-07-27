@@ -99,7 +99,7 @@ import {
             </FlexBetween>
   
             <FlexBetween
-              onClick={() => navigate(`/settings/${user._id}`)}
+              onClick={() => navigate(`/settings`)}
               sx={{
                 "&:hover": {
                   cursor: "pointer",

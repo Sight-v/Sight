@@ -5,6 +5,7 @@ import ProfilePage from "./scenes/profilePage";
 import SettingsPage from "./scenes/settingsPage";
 import ApiPage from "./scenes/apiPage";
 import UserApiPage from "./scenes/userApiPage";
+import RootPage from "./scenes/rootPage";
 
 import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -27,15 +28,15 @@ function App() {
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route
+              path="/root"
+              element={<RootPage />}
+            />
+            <Route
               path="/home"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
             />
             <Route
-              path="/profile/:userId"
-              element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/settings/:userId"
+              path="/settings"
               element={isAuth ? <SettingsPage /> : <Navigate to="/" />}
             /> 
             <Route
