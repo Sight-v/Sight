@@ -5,7 +5,7 @@
 # Sight
 
 Sight is an online API Monitoring Tool </br> </br>
-It provides proper tracking of API requests and users with the help of line charts and tables ! </br>
+Which provides proper tracking of API requests and users with the help of charts and tables basically how Rapid API does </br>
 Sight is perfect if you want to monitor the traffic of your API 
 
 ## Features
