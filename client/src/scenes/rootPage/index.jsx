@@ -26,7 +26,11 @@ const RootPage = () => {
         // background: "radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)"
 
         // background: "#A9C9FF",
-        background: "radial-gradient( circle farthest-corner at 0.2% 0.5%,  rgba(68,36,164,1) 3.7%, rgba(84,212,228,1) 92.7% );"
+        backgroundColor: "#A9C9FF", backgroundImage: "linear-gradient(0deg, rgba(122,231,248,1) 0%, rgba(86,118,191,1) 100%)"
+
+        // backgroundColor: "#A9C9FF", backgroundImage: "linear-gradient( 180deg,  rgba(122,231,248,1) 6.5%, rgba(86,118,191,1) 90.9% )"
+
+        // background: "radial-gradient( circle farthest-corner at 0.2% 0.5%,  rgba(68,36,164,1) 3.7%, rgba(84,212,228,1) 92.7% );"
     });
 
 

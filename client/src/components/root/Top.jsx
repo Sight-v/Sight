@@ -209,7 +209,7 @@ const Top = () => {
                         },
                     }}
                 >
-                    <img src="https://i.imgur.com/6XZGQ0F.png" alt="sight" width="100%" />
+                    <img src="https://cdn.discordapp.com/attachments/1133092727127548015/1135142221931364423/sight.png" alt="sight" width="100%" />
                 </Box>
             </Box>
         </Box>
