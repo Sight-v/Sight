@@ -21,5 +21,3 @@ Get detailed charts about selected dates for your api endpoints
 
 Sight makes it easy to track your API usage
 </details>
-
-Join the creative revolution on Sight and unleash your imagination! ✨
